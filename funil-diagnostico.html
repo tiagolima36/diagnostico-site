@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Diagnóstico: Sua Loja Tem Potencial Para Vender Por Minuto?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --orange: #F26522;
+  --orange-light: #FFF0E8;
+  --orange-mid: #FFD9C2;
+  --white: #FFFFFF;
+  --gray-100: #F9F9F9;
+  --gray-200: #F0F0F0;
+  --gray-400: #BDBDBD;
+  --gray-600: #757575;
+  --gray-900: #1A1A1A;
+  --green: #22C55E;
+  --green-light: #F0FDF4;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--white);
+  color: var(--gray-900);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bg-glow {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 40% at 10% 0%, rgba(242,101,34,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(242,101,34,0.06) 0%, transparent 70%);
+}
+
+.screen {
+  display: none; position: relative; z-index: 1;
+  min-height: 100vh; padding-bottom: 40px;
+  animation: fadeIn 0.35s ease;
+}
+.screen.active { display: flex; flex-direction: column; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px 24px 0;
+}
+.topbar-logo {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--orange); text-transform: uppercase;
+}
+
+/* PROGRESS */
+.progress-wrap { padding: 16px 24px 0; }
+.progress-label {
+  font-size: 12px; color: var(--gray-600); margin-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+.progress-bar {
+  height: 5px; background: var(--gray-200); border-radius: 99px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--orange); border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 480px; margin: 0 auto; padding: 0 20px;
+  flex: 1; display: flex; flex-direction: column;
+}
+
+/* LANDING */
+.landing-tag {
+  display: inline-block;
+  background: var(--orange-light); color: var(--orange);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 5px 14px; border-radius: 99px; margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.landing-h1 {
+  font-size: 36px; font-weight: 900; line-height: 1.05;
+  color: var(--gray-900); letter-spacing: -1px; margin-bottom: 12px;
+}
+.landing-h1 span { color: var(--orange); }
+.landing-sub {
+  font-size: 15px; color: var(--gray-600); line-height: 1.6; margin-bottom: 28px;
+}
+.landing-hero { padding: 28px 0 0; text-align: center; }
+
+.stat-row {
+  display: flex; gap: 10px; margin-bottom: 28px;
+}
+.stat-card {
+  flex: 1; background: var(--orange-light); border-radius: var(--radius-sm);
+  padding: 14px 12px; text-align: center;
+}
+.stat-num {
+  font-size: 22px; font-weight: 900; color: var(--orange); display: block;
+}
+.stat-label {
+  font-size: 11px; color: var(--gray-600); font-weight: 500; margin-top: 2px;
+}
+
+/* QUIZ */
+.quiz-title {
+  font-size: 20px; font-weight: 800; color: var(--gray-900);
+  margin: 24px 0 6px; line-height: 1.3;
+}
+.quiz-support {
+  font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 20px;
+}
+.options-grid {
+  display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; flex: 1;
+}
+.option-card {
+  padding: 14px 16px;
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500; color: var(--gray-900);
+  cursor: pointer; transition: all 0.18s ease; background: white;
+  text-align: left; line-height: 1.4;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.option-card:hover { border-color: var(--orange-mid); background: var(--orange-light); }
+.option-card.selected {
+  border-color: var(--orange); background: var(--orange-light);
+  color: var(--orange); font-weight: 600;
+}
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%; padding: 18px;
+  background: var(--orange); color: white;
+  border: none; border-radius: var(--radius);
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(242,101,34,0.30);
+  transition: all 0.2s ease;
+}
+.btn-primary:hover { background: #D95A1C; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-back {
+  padding: 18px 16px; background: transparent; color: var(--gray-400);
+  border: 2px solid var(--gray-200); border-radius: var(--radius);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease; white-space: nowrap; min-width: 90px;
+}
+.btn-back:hover { border-color: var(--gray-400); color: var(--gray-600); }
+
+.btn-wpp {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 18px 20px; background: #25D366; color: white;
+  border: none; border-radius: var(--radius);
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s ease; width: 100%;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.30);
+}
+.btn-wpp:hover { background: #1EB558; }
+
+/* FORM */
+.form-title { font-size: 20px; font-weight: 800; margin: 24px 0 6px; line-height: 1.3; }
+.form-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; line-height: 1.5; }
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 12px; font-weight: 600; color: var(--gray-600);
+  margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.field input {
+  width: 100%; padding: 14px 14px;
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-size: 16px; font-family: inherit; color: var(--gray-900);
+  background: white; transition: border-color 0.2s; outline: none;
+}
+.field input:focus { border-color: var(--orange); }
+.optional { font-size: 11px; color: var(--gray-400); font-weight: 400; margin-left: 4px; }
+
+/* INPUT dentro do quiz */
+.quiz-input {
+  width: 100%; padding: 16px;
+  border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-size: 16px; font-family: inherit; color: var(--gray-900);
+  background: white; transition: border-color 0.2s; outline: none;
+  margin-bottom: 12px;
+}
+.quiz-input:focus { border-color: var(--orange); }
+
+/* RESULTADO */
+.result-header { padding: 24px 20px 0; text-align: center; }
+.result-badge {
+  display: inline-block; background: var(--green-light); color: var(--green);
+  font-size: 12px; font-weight: 700; padding: 5px 14px;
+  border-radius: 99px; margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.result-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
+.result-sub { font-size: 14px; color: var(--gray-600); margin-bottom: 20px; }
+
+/* POTENCIAL CARD */
+.potencial-card {
+  background: var(--gray-900); border-radius: var(--radius);
+  padding: 24px 20px; margin: 0 20px 16px; color: white; text-align: center;
+}
+.potencial-label {
+  font-size: 12px; font-weight: 600; color: var(--gray-400);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.potencial-valor {
+  font-size: 48px; font-weight: 900; color: var(--orange);
+  letter-spacing: -2px; line-height: 1;
+}
+.potencial-unit {
+  font-size: 14px; color: var(--gray-400); margin-top: 4px;
+}
+
+/* GRAFICO */
+.grafico-wrap { padding: 0 20px 16px; }
+.grafico-card {
+  background: white; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius); padding: 20px;
+}
+.grafico-titulo {
+  font-size: 13px; font-weight: 700; color: var(--gray-600);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px;
+}
+.barra-row { margin-bottom: 14px; }
+.barra-label {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.barra-nome { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+.barra-valor { font-size: 13px; font-weight: 700; color: var(--orange); }
+.barra-bg {
+  height: 10px; background: var(--gray-200); border-radius: 99px; overflow: hidden;
+}
+.barra-fill {
+  height: 100%; border-radius: 99px; width: 0%;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.barra-fill.atual { background: var(--gray-400); }
+.barra-fill.potencial { background: var(--orange); }
+
+/* INSIGHTS */
+.insights-wrap { padding: 0 20px 16px; display: flex; flex-direction: column; gap: 10px; }
+.insight-card {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--orange-light); border-radius: var(--radius-sm); padding: 14px;
+}
+.insight-icon {
+  width: 32px; height: 32px; min-width: 32px;
+  background: var(--orange); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.insight-text { font-size: 13px; line-height: 1.5; color: var(--gray-900); }
+.insight-text strong { color: var(--orange); }
+
+.cta-section { padding: 0 20px 40px; }
+.cta-label {
+  text-align: center; font-size: 14px; color: var(--gray-600);
+  margin-bottom: 12px; line-height: 1.5;
+}
+
+.section-gap { height: 16px; }
+.divider { height: 1px; background: var(--gray-200); margin: 16px 0; }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--gray-900); color: white; padding: 10px 20px;
+  border-radius: 99px; font-size: 13px; font-weight: 600; z-index: 999;
+  opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="toast" id="toast">✓ Copiado!</div>
+
+<!-- TELA 1: LANDING -->
+<div class="screen active" id="screen-landing">
+  <div class="topbar"><span class="topbar-logo">Target Commerce · Diagnóstico</span></div>
+  <div class="container">
+    <div class="landing-hero">
+      <div class="landing-tag">✦ Grátis · 2 minutos</div>
+      <h1 class="landing-h1">Responda <span>9 perguntas</span> e descubra quanto sua loja poderia faturar com um site vendendo 24h por dia.</h1>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-num">24h</span>
+        <span class="stat-label">vendendo com site</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">+73%</span>
+        <span class="stat-label">mais alcance</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">2min</span>
+        <span class="stat-label">pra descobrir</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goTo('screen-quiz'); renderQuestion()">Quero descobrir →</button>
+    <div class="section-gap"></div>
+  </div>
+</div>
+
+<!-- TELA 2: QUIZ -->
+<div class="screen" id="screen-quiz">
+  <div class="topbar"><span class="topbar-logo">Target Commerce · Diagnóstico</span></div>
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="q-label">Pergunta 1 de 6</span>
+      <span id="q-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+  <div class="container">
+    <div class="quiz-title" id="q-title"></div>
+    <div class="quiz-support" id="q-support"></div>
+    <div class="options-grid" id="q-options"></div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="btn-back" id="btn-back" onclick="prevQuestion()" style="display:none">← Voltar</button>
+      <button class="btn-primary" id="btn-next" style="flex:1" onclick="nextQuestion()">Continuar →</button>
+    </div>
+    <div class="section-gap"></div>
+  </div>
+</div>
+
+<!-- TELA 3: LEAD -->
+<div class="screen" id="screen-lead">
+  <div class="topbar"><span class="topbar-logo">Target Commerce · Diagnóstico</span></div>
+  <div class="container">
+    <div class="form-title" style="margin-top:32px">Quase lá!</div>
+    <p class="form-sub">Informe seus dados para liberar seu diagnóstico completo.</p>
+
+    <div class="field"><label>Seu nome</label><input type="text" id="lead-nome" placeholder="Ex: Juliana"/></div>
+    <div class="field"><label>WhatsApp <span class="optional">(com DDD)</span></label><input type="tel" id="lead-whatsapp" placeholder="Ex: 21 99999-0000"/></div>
+    <div class="field"><label>Nome da loja</label><input type="text" id="lead-loja" placeholder="Ex: Amor em Flores"/></div>
+    <div class="field"><label>Instagram <span class="optional">opcional</span></label><input type="text" id="lead-instagram" placeholder="@sualojanoinsta"/></div>
+
+    <div class="section-gap"></div>
+    <button class="btn-primary" onclick="submitLead()">Ver meu diagnóstico →</button>
+    <div class="section-gap"></div>
+  </div>
+</div>
+
+<!-- TELA 4: RESULTADO -->
+<div class="screen" id="screen-result">
+  <div class="result-header">
+    <div class="result-badge">✦ Diagnóstico concluído</div>
+    <div class="result-title" id="res-title">Sua loja tem potencial!</div>
+    <div class="result-sub" id="res-sub">Veja o que um site pode fazer pela sua loja</div>
+  </div>
+
+  <div class="potencial-card" style="margin: 0 20px 16px;">
+    <div class="potencial-label">Potencial de faturamento com site</div>
+    <div class="potencial-valor" id="res-valor">R$ 0</div>
+    <div class="potencial-unit" id="res-unit">por minuto</div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-card">
+      <div class="grafico-titulo">Comparativo mensal</div>
+      <div class="barra-row">
+        <div class="barra-label">
+          <span class="barra-nome">Hoje (sem site)</span>
+          <span class="barra-valor" id="bar-atual-val">R$ 0</span>
+        </div>
+        <div class="barra-bg"><div class="barra-fill atual" id="bar-atual"></div></div>
+      </div>
+      <div class="barra-row">
+        <div class="barra-label">
+          <span class="barra-nome">Com site (projeção)</span>
+          <span class="barra-valor" id="bar-pot-val" style="color:var(--orange)">R$ 0</span>
+        </div>
+        <div class="barra-bg"><div class="barra-fill potencial" id="bar-pot"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insights-wrap" id="insights-wrap"></div>
+
+  <div class="cta-section">
+    <p class="cta-label">Quer transformar esse potencial em realidade? Fala com a Target Commerce.</p>
+    <button class="btn-wpp" onclick="openWpp()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Quero transformar minha loja
+    </button>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+const state = {
+  respostas: {},
+  lead: { nome: '', whatsapp: '', loja: '', instagram: '' }
+};
+
+// ===== PERGUNTAS =====
+// type: 'options' = múltipla escolha | 'text' = campo de texto
+const perguntas = [
+  {
+    key: 'canal', type: 'options',
+    title: 'Como você vende hoje?',
+    support: 'Selecione o canal principal da sua loja.',
+    options: ['Só loja física','Instagram e WhatsApp','Marketplace (Shopee, Mercado Livre)','Tenho site mas não vende bem','Vendo em vários canais']
+  },
+  {
+    key: 'faturamento', type: 'options',
+    title: 'Qual é o faturamento médio da sua loja por mês?',
+    support: 'Uma estimativa já ajuda. Isso é usado para calcular seu potencial.',
+    options: ['Menos de R$ 3.000','Entre R$ 3.000 e R$ 8.000','Entre R$ 8.000 e R$ 20.000','Entre R$ 20.000 e R$ 50.000','Acima de R$ 50.000']
+  },
+  {
+    key: 'nome', type: 'text',
+    title: 'Como posso te chamar?',
+    support: 'Vou usar seu nome para personalizar seu diagnóstico.',
+    placeholder: 'Ex: Juliana'
+  },
+  {
+    key: 'ticket', type: 'options',
+    title: 'Qual é o ticket médio das suas vendas?',
+    support: 'O valor médio que cada cliente gasta por compra.',
+    options: ['Até R$ 50','Entre R$ 50 e R$ 150','Entre R$ 150 e R$ 300','Entre R$ 300 e R$ 600','Acima de R$ 600']
+  },
+  {
+    key: 'horas', type: 'options',
+    title: 'Quantas horas por dia você consegue atender clientes?',
+    support: 'Isso inclui responder mensagens, atender na loja ou no telefone.',
+    options: ['Menos de 4 horas','Entre 4 e 6 horas','Entre 6 e 10 horas','Mais de 10 horas','Atendo 24h (tenho equipe)']
+  },
+  {
+    key: 'loja', type: 'text',
+    title: 'Qual é o nome da sua loja?',
+    support: 'Vou incluir no seu diagnóstico personalizado.',
+    placeholder: 'Ex: Amor em Flores'
+  },
+  {
+    key: 'dor', type: 'options',
+    title: 'Qual é o maior problema da sua loja hoje?',
+    support: 'Isso ajuda a entender o que está travando seu crescimento.',
+    options: ['Poucas pessoas me encontram','Visitantes que não compram','Não consigo vender fora do horário comercial','Dependo demais do meu tempo pessoal','Não tenho como escalar sem contratar mais pessoas']
+  },
+  {
+    key: 'objetivo', type: 'options',
+    title: 'O que você mais quer nos próximos 6 meses?',
+    support: 'Qual resultado faria você dizer que foi um ano incrível?',
+    options: ['Dobrar o faturamento','Vender sem depender só de mim','Ter clientes chegando automaticamente','Ter uma loja profissional e organizada','Escalar pra outros estados ou países']
+  },
+  {
+    key: 'whatsapp', type: 'text',
+    title: 'Por onde mando seu diagnóstico completo?',
+    support: 'Seu WhatsApp com DDD. Não compartilhamos com ninguém.',
+    placeholder: 'Ex: 21 99999-0000',
+    inputType: 'tel'
+  }
+];
+
+let currentQ = 0;
+let selectedOption = null;
+
+// ===== MAPA DE FATURAMENTO =====
+const fatMap = {
+  'Menos de R$ 3.000': 2000,
+  'Entre R$ 3.000 e R$ 8.000': 5500,
+  'Entre R$ 8.000 e R$ 20.000': 14000,
+  'Entre R$ 20.000 e R$ 50.000': 35000,
+  'Acima de R$ 50.000': 65000
+};
+
+const ticketMap = {
+  'Até R$ 50': 35,
+  'Entre R$ 50 e R$ 150': 100,
+  'Entre R$ 150 e R$ 300': 225,
+  'Entre R$ 300 e R$ 600': 450,
+  'Acima de R$ 600': 800
+};
+
+const horasMap = {
+  'Menos de 4 horas': 4,
+  'Entre 4 e 6 horas': 5,
+  'Entre 6 e 10 horas': 8,
+  'Mais de 10 horas': 12,
+  'Atendo 24h (tenho equipe)': 14
+};
+
+// ===== NAVIGATION =====
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ===== QUIZ =====
+function renderQuestion() {
+  const q = perguntas[currentQ];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  document.getElementById('q-label').textContent = `Pergunta ${currentQ + 1} de ${perguntas.length}`;
+  const pct = Math.round((currentQ / perguntas.length) * 100);
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-title').textContent = q.title;
+  document.getElementById('q-support').textContent = q.support;
+
+  const grid = document.getElementById('q-options');
+  grid.innerHTML = '';
+  selectedOption = null;
+
+  const qIndex = currentQ;
+  const qKey = q.key;
+
+  if (q.type === 'text') {
+    // Campo de texto
+    const input = document.createElement('input');
+    input.type = q.inputType || 'text';
+    input.className = 'quiz-input';
+    input.placeholder = q.placeholder || '';
+    input.value = state.respostas[qKey] || '';
+    input.addEventListener('input', () => {
+      selectedOption = input.value.trim();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && input.value.trim()) {
+        nextQuestion(qIndex, input.value.trim());
+      }
+    });
+    grid.appendChild(input);
+    setTimeout(() => { input.focus(); }, 300);
+    selectedOption = input.value.trim() || null;
+
+  } else {
+    // Múltipla escolha
+    grid.style.pointerEvents = 'none';
+    setTimeout(() => { grid.style.pointerEvents = 'auto'; }, 500);
+
+    q.options.forEach((opt) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-card';
+      btn.textContent = opt;
+      if (state.respostas[qKey] === opt) btn.classList.add('selected');
+      btn.addEventListener('click', () => {
+        if (selectedOption && q.type !== 'text') return;
+        document.querySelectorAll('.option-card').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedOption = opt;
+        state.respostas[qKey] = opt;
+        grid.style.pointerEvents = 'none';
+        setTimeout(() => { nextQuestion(qIndex, opt); }, 380);
+      });
+      grid.appendChild(btn);
+    });
+  }
+
+  document.getElementById('btn-next').disabled = false;
+  document.getElementById('btn-back').style.display = currentQ === 0 ? 'none' : 'block';
+}
+
+function nextQuestion(qIdx, answer) {
+  const idx = (qIdx !== undefined) ? qIdx : currentQ;
+  const q = perguntas[idx];
+
+  // Para campos de texto, pegar do input se não foi passado
+  let ans = answer;
+  if (!ans && q.type === 'text') {
+    const input = document.querySelector('.quiz-input');
+    ans = input ? input.value.trim() : '';
+  }
+  if (!ans) ans = selectedOption;
+  if (!ans || (typeof ans === 'string' && !ans.trim())) {
+    if (q.type === 'text') {
+      const input = document.querySelector('.quiz-input');
+      if (input) { input.style.borderColor = 'var(--orange)'; input.focus(); }
+    }
+    return;
+  }
+
+  state.respostas[q.key] = ans;
+
+  // Salvar em state.lead também se for campo de lead
+  if (q.key === 'nome') state.lead.nome = ans;
+  if (q.key === 'loja') state.lead.loja = ans;
+  if (q.key === 'whatsapp') state.lead.whatsapp = ans;
+
+  currentQ = idx + 1;
+  if (currentQ >= perguntas.length) {
+    // Fim do quiz — ir direto pro resultado
+    salvarLead();
+    calcularEMostrar();
+    goTo('screen-result');
+  } else {
+    renderQuestion();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ === 0) { goTo('screen-landing'); return; }
+  currentQ--;
+  renderQuestion();
+}
+
+// ===== LEAD =====
+function submitLead() {
+  const nome = document.getElementById('lead-nome').value.trim();
+  const wpp = document.getElementById('lead-whatsapp').value.trim();
+  const loja = document.getElementById('lead-loja').value.trim();
+  if (!nome) { alert('Por favor, informe seu nome.'); return; }
+  if (!wpp) { alert('Por favor, informe seu WhatsApp.'); return; }
+  if (!loja) { alert('Por favor, informe o nome da loja.'); return; }
+
+  state.lead = {
+    nome,
+    whatsapp: wpp,
+    loja,
+    instagram: document.getElementById('lead-instagram').value.trim()
+  };
+
+  salvarLead();
+  calcularEMostrar();
+  goTo('screen-result');
+}
+
+// ===== CALCULAR POTENCIAL =====
+function calcularEMostrar() {
+  const r = state.respostas;
+  const fatAtual = fatMap[r.faturamento] || 5000;
+  const ticket = ticketMap[r.ticket] || 100;
+  const horas = horasMap[r.horas] || 6;
+
+  // Projeção: com site vende 24h vs horas atuais
+  // Multiplica proporcionalmente + 40% de conversão extra do site
+  const multiplicador = (24 / horas) * 1.4;
+  const fatPotencial = Math.round(fatAtual * multiplicador);
+
+  // Por minuto = potencial / 30 dias / 24h / 60 min
+  const porMinuto = fatPotencial / 30 / 24 / 60;
+  const porMinutoFmt = porMinuto < 1
+    ? `R$ ${porMinuto.toFixed(2).replace('.', ',')}`
+    : `R$ ${porMinuto.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+
+  // Atualizar header
+  document.getElementById('res-title').textContent = `${state.lead.nome.split(' ')[0]}, sua loja tem potencial!`;
+  document.getElementById('res-sub').textContent = `Com um site, ${state.lead.loja} poderia faturar muito mais.`;
+
+  // Card principal
+  document.getElementById('res-valor').textContent = porMinutoFmt;
+
+  // Barras
+  const maxVal = fatPotencial;
+  const pctAtual = Math.round((fatAtual / maxVal) * 100);
+
+  document.getElementById('bar-atual-val').textContent = `R$ ${fatAtual.toLocaleString('pt-BR')}`;
+  document.getElementById('bar-pot-val').textContent = `R$ ${fatPotencial.toLocaleString('pt-BR')}`;
+
+  setTimeout(() => {
+    document.getElementById('bar-atual').style.width = pctAtual + '%';
+    document.getElementById('bar-pot').style.width = '100%';
+  }, 300);
+
+  // Insights personalizados
+  const insights = gerarInsights(r, fatAtual, fatPotencial, horas);
+  const wrap = document.getElementById('insights-wrap');
+  wrap.innerHTML = insights.map(i => `
+    <div class="insight-card">
+      <div class="insight-icon">${i.icon}</div>
+      <div class="insight-text">${i.texto}</div>
+    </div>
+  `).join('');
+}
+
+function gerarInsights(r, fatAtual, fatPotencial, horas) {
+  const ganho = fatPotencial - fatAtual;
+  const insights = [];
+
+  insights.push({
+    icon: '⏰',
+    texto: `Hoje você atende <strong>${horas}h por dia</strong>. Um site vende as <strong>24h restantes</strong> enquanto você dorme, descansa ou cuida de outras coisas.`
+  });
+
+  insights.push({
+    icon: '💰',
+    texto: `Com um site otimizado, sua loja poderia faturar <strong>R$ ${ganho.toLocaleString('pt-BR')} a mais</strong> por mês — sem precisar trabalhar mais horas.`
+  });
+
+  if (r.dor && r.dor.includes('encontram')) {
+    insights.push({ icon: '🔍', texto: `Quem busca seu produto no Google <strong>nunca vai te encontrar</strong> sem um site. Você está invisível para quem já quer comprar.` });
+  } else if (r.dor && r.dor.includes('horário')) {
+    insights.push({ icon: '🌙', texto: `A maioria das compras online acontece <strong>depois das 20h</strong>. Sem site, você perde todas essas vendas noturnas.` });
+  } else if (r.dor && r.dor.includes('escalar')) {
+    insights.push({ icon: '🚀', texto: `Um site bem estruturado vende por você <strong>sem precisar de equipe extra</strong>. É a forma mais inteligente de escalar.` });
+  } else {
+    insights.push({ icon: '📈', texto: `Lojas com site bem posicionado vendem para clientes de <strong>qualquer cidade do Brasil</strong>, não só quem está perto.` });
+  }
+
+  return insights;
+}
+
+// ===== SALVAR LEAD =====
+function salvarLead() {
+  const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbx227fyR7xilL2owXrSDETGfjc9oz8mqskIBZKtUlYmZ27uNVqC0aiVxFgOwoB26TXr/exec';
+  const payload = {
+    data: new Date().toISOString(),
+    nome: state.lead.nome,
+    whatsapp: state.lead.whatsapp,
+    loja: state.lead.loja,
+    instagram: state.lead.instagram,
+    canal: state.respostas.canal || '',
+    faturamento: state.respostas.faturamento || '',
+    ticket: state.respostas.ticket || '',
+    horas: state.respostas.horas || '',
+    dor: state.respostas.dor || '',
+    objetivo: state.respostas.objetivo || '',
+    funil: 'diagnostico-potencial'
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
+// ===== WHATSAPP =====
+function openWpp() {
+  const numero = '5521981909529'; // TROCAR pelo número da Target Commerce
+  const nome = state.lead.nome.split(' ')[0];
+  const loja = state.lead.loja;
+  const fat = state.respostas.faturamento || '';
+  const msg = encodeURIComponent(`Oi! Sou ${nome} da loja ${loja}. Fiz o diagnóstico da Target Commerce e quero saber como transformar o potencial da minha loja em realidade. Meu faturamento atual é ${fat}.`);
+  window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
+}
+</script>
+</body>
+</html>
