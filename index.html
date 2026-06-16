@@ -92,7 +92,7 @@ body {
   text-transform: uppercase;
 }
 .landing-h1 {
-  font-size: 36px; font-weight: 900; line-height: 1.05;
+  font-size: 36px; font-weight: 600; line-height: 1.05;
   color: var(--gray-900); letter-spacing: -1px; margin-bottom: 12px;
 }
 .landing-h1 span { color: var(--orange); }
@@ -124,7 +124,7 @@ body {
   font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 20px;
 }
 .options-grid {
-  display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; flex: 1;
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;
 }
 .option-card {
   padding: 14px 16px;
@@ -415,6 +415,19 @@ const state = {
 // type: 'options' = múltipla escolha | 'text' = campo de texto
 const perguntas = [
   {
+    key: 'nome', type: 'text',
+    title: 'Como posso te chamar?',
+    support: 'Vou usar seu nome para personalizar seu diagnóstico.',
+    placeholder: 'Ex: Juliana'
+  },
+  {
+    key: 'whatsapp', type: 'text',
+    title: 'Qual é o seu WhatsApp?',
+    support: 'Com DDD. Vou enviar seu diagnóstico por lá.',
+    placeholder: 'Ex: 21 99999-0000',
+    inputType: 'tel'
+  },
+  {
     key: 'canal', type: 'options',
     title: 'Como você vende hoje?',
     support: 'Selecione o canal principal da sua loja.',
@@ -425,12 +438,6 @@ const perguntas = [
     title: 'Qual é o faturamento médio da sua loja por mês?',
     support: 'Uma estimativa já ajuda. Isso é usado para calcular seu potencial.',
     options: ['Menos de R$ 3.000','Entre R$ 3.000 e R$ 8.000','Entre R$ 8.000 e R$ 20.000','Entre R$ 20.000 e R$ 50.000','Acima de R$ 50.000']
-  },
-  {
-    key: 'nome', type: 'text',
-    title: 'Como posso te chamar?',
-    support: 'Vou usar seu nome para personalizar seu diagnóstico.',
-    placeholder: 'Ex: Juliana'
   },
   {
     key: 'ticket', type: 'options',
@@ -445,12 +452,6 @@ const perguntas = [
     options: ['Menos de 4 horas','Entre 4 e 6 horas','Entre 6 e 10 horas','Mais de 10 horas','Atendo 24h (tenho equipe)']
   },
   {
-    key: 'loja', type: 'text',
-    title: 'Qual é o nome da sua loja?',
-    support: 'Vou incluir no seu diagnóstico personalizado.',
-    placeholder: 'Ex: Amor em Flores'
-  },
-  {
     key: 'dor', type: 'options',
     title: 'Qual é o maior problema da sua loja hoje?',
     support: 'Isso ajuda a entender o que está travando seu crescimento.',
@@ -461,13 +462,6 @@ const perguntas = [
     title: 'O que você mais quer nos próximos 6 meses?',
     support: 'Qual resultado faria você dizer que foi um ano incrível?',
     options: ['Dobrar o faturamento','Vender sem depender só de mim','Ter clientes chegando automaticamente','Ter uma loja profissional e organizada','Escalar pra outros estados ou países']
-  },
-  {
-    key: 'whatsapp', type: 'text',
-    title: 'Por onde mando seu diagnóstico completo?',
-    support: 'Seu WhatsApp com DDD. Não compartilhamos com ninguém.',
-    placeholder: 'Ex: 21 99999-0000',
-    inputType: 'tel'
   }
 ];
 
@@ -541,7 +535,14 @@ function renderQuestion() {
       }
     });
     grid.appendChild(input);
-    setTimeout(() => { input.focus(); }, 300);
+    // Tenta focus imediato e depois com delay como fallback
+    try { input.focus(); } catch(e) {}
+    setTimeout(() => { 
+      try { input.focus(); } catch(e) {}
+    }, 50);
+    setTimeout(() => { 
+      try { input.focus(); } catch(e) {}
+    }, 150);
     selectedOption = input.value.trim() || null;
 
   } else {
@@ -561,7 +562,13 @@ function renderQuestion() {
         selectedOption = opt;
         state.respostas[qKey] = opt;
         grid.style.pointerEvents = 'none';
-        setTimeout(() => { nextQuestion(qIndex, opt); }, 380);
+        // Se a próxima pergunta for texto, avança imediato pra garantir foco no iOS
+        const nextQ = perguntas[qIndex + 1];
+        if (nextQ && nextQ.type === 'text') {
+          nextQuestion(qIndex, opt);
+        } else {
+          setTimeout(() => { nextQuestion(qIndex, opt); }, 380);
+        }
       });
       grid.appendChild(btn);
     });
@@ -655,7 +662,7 @@ function calcularEMostrar() {
 
   // Atualizar header
   document.getElementById('res-title').textContent = `${state.lead.nome.split(' ')[0]}, sua loja tem potencial!`;
-  document.getElementById('res-sub').textContent = `Com um site, ${state.lead.loja} poderia faturar muito mais.`;
+  document.getElementById('res-sub').textContent = `Veja o que um site poderia fazer pela sua loja`;
 
   // Card principal
   document.getElementById('res-valor').textContent = porMinutoFmt;
@@ -738,9 +745,8 @@ function salvarLead() {
 function openWpp() {
   const numero = '5521981909529'; // TROCAR pelo número da Target Commerce
   const nome = state.lead.nome.split(' ')[0];
-  const loja = state.lead.loja;
   const fat = state.respostas.faturamento || '';
-  const msg = encodeURIComponent(`Oi! Sou ${nome} da loja ${loja}. Fiz o diagnóstico da Target Commerce e quero saber como transformar o potencial da minha loja em realidade. Meu faturamento atual é ${fat}.`);
+  const msg = encodeURIComponent(`Oi! Sou ${nome}. Fiz o diagnóstico da Target Commerce e quero saber como transformar o potencial da minha loja em realidade. Meu faturamento atual é ${fat}.`);
   window.open(`https://wa.me/${numero}?text=${msg}`, '_blank');
 }
 </script>
